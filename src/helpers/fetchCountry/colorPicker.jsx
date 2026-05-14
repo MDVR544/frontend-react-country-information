@@ -25,9 +25,4 @@ export default ColorPicker
 
 
 
-// <article>
-// {flag && <img src={flag} alt="Vlag"/>}
-// {country && <ColorPicker className={region}>{country}</ColorPicker>}
-// {population && <li>has a population of {population} people</li>}
-// {error && <p>er is iets mis gegaan</p>}
-// </article>
+

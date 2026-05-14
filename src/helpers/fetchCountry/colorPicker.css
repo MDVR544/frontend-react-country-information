@@ -1,17 +1,16 @@
-li{
+li {
     list-style: none;
 }
 
-
-.Africa{
+.Africa {
     color: blue;
 }
 
-.Americas{
+.Americas {
     color: green;
 }
 
-.Asia{
+.Asia {
     color: red;
 }
 
@@ -19,10 +18,10 @@ li{
     color: yellow;
 }
 
-.Oceania{
+.Oceania {
     color: Purple;
 }
 
-.Other{
+.Other {
     color: grey;
 }
