@@ -1,4 +1,4 @@
-
+import './convertToMillions.css'
 
 function ConvertToMillions(amount){
     const convertedToMillions = amount / 1000000;
