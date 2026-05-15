@@ -2,34 +2,41 @@ import './App.css';
 import axios from 'axios';
 import {useState} from "react";
 import ColorPicker from "./helpers/fetchCountry/colorPicker.jsx";
+import ConvertToMillions from "./helpers/convertToMillions/convertToMillions.jsx";
 
 function App() {
     const [countries, setCountries] = useState([])
     const [error, toggleError] = useState(false);
     const [loading, toggleLoading] = useState(false);
     const [countryInfo, setCountryInfo] = useState({});
+    const [searchCountryInfo, setSearchCountryInfo] = useState("")
 
     const endPoint = 'https://restcountries.com/v3.1/all?fields=name,flags,population,region,cca3'
 
     async function consoleLogger() {
-        const response = await axios.get('https://restcountries.com/v3.1/name/netherlands');
+        const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,flags,population,region,cca3');
         console.log(response.data)
-        console.log(response.data[1].capital)
-
     }
 
+    function handleSubmit(e){
+        e.preventDefault();
+        fetchCountry();
+    }
 
     async function fetchCountry(){
         toggleError(false)
         toggleLoading(true)
+
         try {
-            const response = await axios.get('https://restcountries.com/v3.1/name/netherlands');
-            setCountryInfo(response.data[1])
+            const response = await axios.get(`https://restcountries.com/v3.1/name/${searchCountryInfo}`);
+            setCountryInfo(response.data[0])
+            setSearchCountryInfo("");
         } catch (e) {
             toggleError(true);
             console.error(e);
         } finally {
             toggleLoading(false);
+
         }
     }
 
@@ -57,15 +64,32 @@ function App() {
 
     return (
         <>
-
-            <main>
+            <nav>
                 <button onClick={consoleLogger}>Console Log</button>
+                <button disabled={loading} onClick={fetchCountries}>Klik hier om alle landen te zien</button>
+            </nav>
+            <main>
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="form-searchCountyInfo">
+                        Search Country Info
+                        <input type="text"
+                               name="searchCountryInfo"
+                               id="form-countryInfo"
+                               value={searchCountryInfo}
+                               onChange={(e)=> setSearchCountryInfo(e.target.value)} />
+                    </label>
+                    <button type="submit" disabled={loading}>klik hier om info van één land op te halen</button>
+                </form>
 
-                <button disabled={loading} onClick={fetchCountry}>klik hier om info van één land op te halen</button>
-                {countryInfo.name && <p><img src={countryInfo.flag} alt="Flag"/> {countryInfo.name.common}</p>}
-                {countryInfo.name && <p>{countryInfo.name.common} is situated in {countryInfo.subregion} and the capital is {countryInfo.capital}</p>}
+                {countryInfo.name &&
+            <div>
+                <p><img src={countryInfo.flag} alt="Flag"/> {countryInfo.name.common}</p>
+                <p>{countryInfo.name.common} is situated in {countryInfo.subregion} and the capital is {countryInfo.capital}</p>
+                <p>It has a population of {ConvertToMillions(countryInfo.population)} million people and it borders with {countryInfo.borders.length} neighboring countries</p>
+            </div>
+        }
+                {error && <p>{searchCountryInfo} bestaat niet. Probeer het opnieuw</p>}
 
-                <button disabled={loading} onClick={fetchCountries}>Klik hier! om je land op te halen</button>
                 {countries.map((country) => {
                     return (
                         <article key={country.cca3}>
@@ -74,7 +98,6 @@ function App() {
                             <li >has a population of {country.population} people</li>
                         </article>
                             )})}
-                {error && <p>er is iets mis gegaan</p>}
             </main>
         </>
     )
